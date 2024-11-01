@@ -1,0 +1,4 @@
+main.py is the execution point... 
+
+In here solid principle  is applied. The main.py is the entry point of the application. It is responsible for the overall..
+every file maintain indiviual  responsibility. 
