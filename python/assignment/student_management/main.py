@@ -1,71 +1,85 @@
-import json
 from Student import Student
 from Course import Course
 
-students = []
-courses = []
-
-def load_data():
-    global students, courses
-    try:
-        with open("students.json", "r") as f:
-            students = [Student(**data) for data in json.load(f)]
-    except FileNotFoundError:
-        print("No existing student data found. Starting fresh.")
-    except json.JSONDecodeError:
-        print("Error reading student data. Starting fresh.")
-
-    try:
-        with open("courses.json", "r") as f:
-            courses = [Course(**data) for data in json.load(f)]
-    except FileNotFoundError:
-        print("No existing course data found. Starting fresh.")
-    except json.JSONDecodeError:
-        print("Error reading course data. Starting fresh.")
-
-def save_data():
-    with open("students.json", "w") as f:
-        json.dump([s.__dict__ for s in students], f)
-
-    with open("courses.json", "w") as f:
-        json.dump([{"course_name": c.course_name, "course_code": c.course_code, "instructor": c.instructor, "students": [s.student_id for s in c.students]} for c in courses], f)
+# Store students and courses in dictionaries for easy retrieval by ID or course code
+students = {}
+courses = {}
 
 def add_student():
-    name = input("Enter student's name: ")
-    age = int(input("Enter student's age: "))
-    address = input("Enter student's address: ")
-    student_id = input("Enter student ID: ")
+    name = input("Enter Student Name: ")
+    age = int(input("Enter Student Age: "))
+    address = input("Enter Student Address: ")
+    student_id = input("Enter Student ID: ")
     student = Student(name, age, address, student_id)
-    students.append(student)
-    print(f"Student {name} added successfully.")
+    students[student_id] = student
+    print(f"Student '{name}' added successfully.")
+
+def add_course():
+    course_name = input("Enter Course Name: ")
+    course_code = input("Enter Course Code: ")
+    instructor = input("Enter Instructor Name: ")
+    course = Course(course_name, course_code, instructor)
+    courses[course_code] = course
+    print(f"Course '{course_name}' added successfully.")
+
+def main():
+    while True:
+        print("\nStudent Management System")
+        print("1. Add Student")
+        print("2. Add New Course")
+        print("3. Enroll in Course")
+        print("4. Add Grade")
+        print("5. Display Student Details")
+        print("6. Display Course Details")
+        print("0. Exit")
+        
+        option = input("Select Option: ")
+        
+        if option == "1":
+            add_student()
+        elif option == "2":
+            add_course()
+        elif option == "3":
+            enroll_in_course()
+        elif option == "4":
+            add_grade()
+        elif option == "5":
+            display_student_details()
+        elif option == "6":
+            display_course_details()
+        elif option == "0":
+            print("Exiting the system.")
+            break
+        else:
+            print("Invalid option. Please try again.")
 
 def enroll_in_course():
-    student_id = input("Enter student ID: ")
-    course_code = input("Enter course code: ")
-    student = next((s for s in students if s.student_id == student_id), None)
-    course = next((c for c in courses if c.course_code == course_code), None)
+    student_id = input("Enter Student ID: ")
+    course_code = input("Enter Course Code: ")
+    student = students.get(student_id)
+    course = courses.get(course_code)
     
     if student and course:
         course.add_student(student)
-        print(f"Student {student.name} enrolled in {course.course_name} successfully.")
+        print(f"Student {student.name} enrolled in {course.course_name}.")
     else:
-        print("Student or course not found.")
+        print("Invalid student ID or course code.")
 
 def add_grade():
-    student_id = input("Enter student ID: ")
-    course_code = input("Enter course code: ")
-    grade = input("Enter grade: ")
-    student = next((s for s in students if s.student_id == student_id), None)
+    student_id = input("Enter Student ID: ")
+    course_code = input("Enter Course Code: ")
+    grade = input("Enter Grade: ")
+    student = students.get(student_id)
     
-    if student:
+    if student and course_code in [course.course_code for course in student.courses]:
         student.add_grade(course_code, grade)
-        print(f"Grade {grade} added for student {student.name} in {course_code}.")
+        print(f"Grade {grade} added for {student.name} in course {course_code}.")
     else:
-        print("Student not found.")
+        print("Student is not enrolled in this course.")
 
 def display_student_details():
-    student_id = input("Enter student ID: ")
-    student = next((s for s in students if s.student_id == student_id), None)
+    student_id = input("Enter Student ID: ")
+    student = students.get(student_id)
     
     if student:
         student.display_student_info()
@@ -73,44 +87,13 @@ def display_student_details():
         print("Student not found.")
 
 def display_course_details():
-    course_code = input("Enter course code: ")
-    course = next((c for c in courses if c.course_code == course_code), None)
-
+    course_code = input("Enter Course Code: ")
+    course = courses.get(course_code)
+    
     if course:
         course.display_course_info()
     else:
         print("Course not found.")
-
-def main():
-    load_data()
-    
-    while True:
-        print("\nMenu:")
-        print("1. Add Student")
-        print("2. Enroll in Course")
-        print("3. Add Grade")
-        print("4. Display Student Details")
-        print("5. Display Course Details")
-        print("6. Exit")
-
-        choice = input("Choose an option: ")
-
-        if choice == '1':
-            add_student()
-        elif choice == '2':
-            enroll_in_course()
-        elif choice == '3':
-            add_grade()
-        elif choice == '4':
-            display_student_details()
-        elif choice == '5':
-            display_course_details()
-        elif choice == '6':
-            save_data()
-            print("Exiting the program.")
-            break
-        else:
-            print("Invalid choice, please try again.")
 
 if __name__ == "__main__":
     main()
