@@ -1,0 +1,13 @@
+SELECT 
+    account.CUST_ID,
+    individual.FIRST_NAME,
+    individual.LAST_NAME,
+    SUM(account.AVAIL_BALANCE) AS TOTAL_BALANCE
+FROM 
+    account
+INNER JOIN 
+    customer ON customer.CUST_ID = account.CUST_ID
+INNER JOIN
+	individual on individual.CUST_ID = customer.CUST_ID
+GROUP BY 
+    account.CUST_ID;
