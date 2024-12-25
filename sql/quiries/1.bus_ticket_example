@@ -1,0 +1,13 @@
+SELECT 
+    buses.id AS bus_id,
+    buses.name AS bus_name,
+    bus_schedules.start_from,
+    bus_schedules.time,
+    bus_schedules.date,
+    routes.route_name
+FROM 
+    bus_schedules
+INNER JOIN 
+    buses ON bus_schedules.bus_id = buses.id
+INNER JOIN 
+    routes ON buses.route_id = routes.id;
