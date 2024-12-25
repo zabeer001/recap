@@ -1,5 +1,0 @@
-s = input()
-li = s.split(' ')
-unique_li = list(set(li))
-res = len(li) - len(unique_li)
-print(res)
