@@ -11,3 +11,5 @@ INNER JOIN
 	individual on individual.CUST_ID = customer.CUST_ID
 GROUP BY 
     account.CUST_ID;
+
+-- it will bring the total balance for each customer

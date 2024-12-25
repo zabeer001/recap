@@ -11,3 +11,5 @@ INNER JOIN
     buses ON bus_schedules.bus_id = buses.id
 INNER JOIN 
     routes ON buses.route_id = routes.id;
+
+-- it just brings data from different table.. 
